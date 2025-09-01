@@ -28,7 +28,7 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
             ~/.ccache
-          key: ${{ runner.os }}-android-${{ github.sha }}
+          key: ${{ runner.os }}-android-${{ hashFiles('**/build.gradle.kts') }}-${{ hashFiles('**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-android-
       - name: Query tag name
@@ -38,6 +38,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ccache apksigner glslang-dev glslang-tools
+      - name: Setup ccache
+        run: |
+          ccache --set-config=max_size=2.0G
       - name: Build
         run: ./.ci/scripts/android/build.sh
         env:
